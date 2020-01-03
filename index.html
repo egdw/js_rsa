@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./jsencrypt.js"></script>
+</head>
+
+<body>
+
+</body>
+
+<script>
+    //服务器通过get请求跳转到其他页面，为了保证数据没有被篡改，服务器需要进行加密。
+    //服务器通过公钥把相关的数据进行加密之后，公开私钥。只有公钥加密过的数据才能被私钥解密。否则就是被篡改
+    //服务器的公钥需要绝对的保密，不能告诉任何人。
+    //获取get请求中的参数
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return decodeURI(r[2]);
+        return null;
+    }
+
+    var text = getQueryString("text")
+    var encrypt = new JSEncrypt();
+    var public_key = "-----BEGIN PUBLIC KEY-----MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC9JsvcGBwtw6pFThs/q6mS9jnh7Akl5QG68L0/DJT51S/QBOxFDjE2SncocU73jFIVWfEZNWdMOMyNEUdYpCPCpcvktt9FdEMY7oPiophVJ1MipN0XuQEqwlbodsUtkEYJRSIkZXN0oHINP+ro0SAGITfJeEdPHml5o9aIZyxLOQIDAQAB-----END PUBLIC KEY-----"
+    var private_key = "-----BEGIN PRIVATE KEY-----MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAL0my9wYHC3DqkVOGz+rqZL2OeHsCSXlAbrwvT8MlPnVL9AE7EUOMTZKdyhxTveMUhVZ8Rk1Z0w4zI0RR1ikI8Kly+S230V0Qxjug+KimFUnUyKk3Re5ASrCVuh2xS2QRglFIiRlc3Sgcg0/6ujRIAYhN8l4R08eaXmj1ohnLEs5AgMBAAECgYBwnyHwWRamFQNToo7M2TvtOdf68Vv9CR5/nQlA+g/VtR5zwAqhjzKz/aB3HwgCkrTo65WHCeoIUyVPtQMC/zAelezqjSnreoD68/GPuY4dTS+Yizr7Nu6jAdLyol6fJeeSHX3jsIOcKMgsO+fkYgf4hK3t8UNEvJ1G6L8avQmkUQJBAOV6UuTQQej/t2qkagAa3brvTBhH1Yah2fKnxVCPA44FxT1lWjGqSg6BMvZ4BNrde0O9CfzLYf1cQgpllqQmP/UCQQDTA1GNfAbQoAa6/37cJTv9PdJEKE+TB7nUcNrUfCER4VIwAZbgVVkfDneMwLrQhxwjXcW9aO1H4IKRHaDm3+e1AkEAngTq2geSq2iTnArVt3bIovYvlzS4E7qWQ2NGG2Av2Xedx9ZoEnUqA+zx9AjXhwMm45FkNEC1HGuQSmqEHkr8lQJARB0nHxexD3kIkyZUKfXu9mEVVaD5hsmQp83CJaLn/eCQ6iQpMsL6ILdHyeyQoS1r3NKxOOH87h2/p947iSsvnQJBANf8FSomJI2yURWx0N/1ObWB0DapwkcZTHRgsBc3yFuJAHj7l1WjxgK+Q5Wuh7ELHDrAYbe7udZKIyvj4lz+faw=-----END PRIVATE KEY-----"
+    encrypt.setPublicKey(public_key)
+    encrypted = encrypt.encrypt(text)
+    console.log(encrypted) //加密的数据
+
+    var decrypt = new JSEncrypt();
+    decrypt.setPrivateKey(private_key)
+    var uncrypted = decrypt.decrypt(encrypted);
+    console.log(uncrypted) //解密的数据
+</script>
+
+</html>
